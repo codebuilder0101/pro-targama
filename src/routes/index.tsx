@@ -35,11 +35,11 @@ function TranslatorPage() {
       setTranslatedText("");
       setDetected(null);
       if (err.message.includes("MISSING_KEY")) {
-        toast.error("Chave da API DeepL não configurada.");
-      } else if (err.message.includes("403")) {
-        toast.error("Chave da API DeepL inválida.");
-      } else if (err.message.includes("456")) {
-        toast.error("Limite de tradução do DeepL atingido.");
+        toast.error("Chave da API OpenAI não configurada.");
+      } else if (err.message.includes("OPENAI_401")) {
+        toast.error("Chave da API OpenAI inválida.");
+      } else if (err.message.includes("OPENAI_429")) {
+        toast.error("Limite de uso da OpenAI atingido.");
       } else {
         toast.error("Erro ao traduzir");
       }
