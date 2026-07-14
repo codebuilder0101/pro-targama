@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Languages, Lock, Sparkles, Star } from "lucide-react";
+import { Cloud, Languages, Smartphone, Sparkles, Star, Wand2 } from "lucide-react";
 
 export const Route = createFileRoute("/sobre")({
   head: () => ({
@@ -8,7 +8,7 @@ export const Route = createFileRoute("/sobre")({
       {
         name: "description",
         content:
-          "Sobre o Targama: um tradutor web minimalista com DeepL, favoritos locais e foco em privacidade.",
+          "Sobre o Targama: um tradutor web minimalista com IA (OpenAI), detecção automática de idioma e favoritos sincronizados.",
       },
     ],
   }),
@@ -20,54 +20,65 @@ function AboutPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
       <h1 className="text-3xl font-extrabold text-foreground sm:text-4xl">Sobre o Targama</h1>
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        O Targama é um tradutor web minimalista com tema escuro. Digite um texto, o idioma de
-        origem é detectado automaticamente, escolha o idioma de destino e receba uma tradução
-        rápida e limpa — feita com a API do DeepL.
+        O Targama é um tradutor web minimalista com tema escuro. Digite um texto, o idioma de origem
+        é detectado automaticamente, escolha o idioma de destino e receba uma tradução rápida e
+        natural — gerada por inteligência artificial com os modelos da OpenAI. A tradução acontece
+        enquanto você digita, e você pode salvar as mais úteis nos favoritos.
       </p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <Feature icon={<Wand2 className="h-5 w-5" />} title="Tradução com IA">
+          As traduções são geradas pelos modelos de linguagem da OpenAI, priorizando fluência e
+          preservando a formatação do texto original.
+        </Feature>
         <Feature icon={<Languages className="h-5 w-5" />} title="Detecção automática">
-          O idioma de origem é identificado automaticamente pela DeepL, com suporte a dezenas de
-          idiomas.
+          O idioma de origem é identificado automaticamente, com suporte a mais de 30 idiomas de
+          destino.
         </Feature>
-        <Feature icon={<Star className="h-5 w-5" />} title="Favoritos">
-          Salve traduções úteis e gerencie tudo na página de favoritos.
+        <Feature icon={<Star className="h-5 w-5" />} title="Favoritos sincronizados">
+          Salve traduções úteis com um toque na estrela e reveja todas na página de favoritos.
         </Feature>
-        <Feature icon={<Sparkles className="h-5 w-5" />} title="Instalável (PWA)">
+        <Feature icon={<Cloud className="h-5 w-5" />} title="Na nuvem, por dispositivo">
+          Seus favoritos ficam guardados no banco de dados (Supabase) e associados apenas ao seu
+          dispositivo — sem necessidade de criar conta.
+        </Feature>
+        <Feature icon={<Smartphone className="h-5 w-5" />} title="Instalável (PWA)">
           Instale o Targama como um app direto pelo navegador, no desktop ou no celular.
         </Feature>
-        <Feature icon={<Lock className="h-5 w-5" />} title="Privacidade">
-          Seus favoritos ficam só no seu navegador.
+        <Feature icon={<Sparkles className="h-5 w-5" />} title="Rápido e minimalista">
+          Interface limpa, sem distrações, com tradução em tempo real enquanto você escreve.
         </Feature>
       </div>
 
       <section className="mt-8 rounded-lg border border-border bg-card p-6">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
-          <Lock className="h-5 w-5 text-accent" />
-          Nota de privacidade
+          <Cloud className="h-5 w-5 text-accent" />
+          Como seus dados são tratados
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Os favoritos são armazenados exclusivamente no seu navegador, via{" "}
-          <code className="rounded bg-secondary px-1.5 py-0.5 text-xs text-foreground">
-            localStorage
-          </code>
-          . Nada é enviado para servidores externos, exceto o próprio texto a ser traduzido, que é
-          processado pela API do DeepL apenas para gerar a tradução.
+          O texto que você digita é enviado com segurança aos modelos da OpenAI apenas para gerar a
+          tradução. As traduções que você marca como favoritas são armazenadas no banco de dados
+          (Supabase) e vinculadas a um identificador anônimo do seu dispositivo — nenhum dado
+          pessoal ou login é solicitado. Você pode remover qualquer favorito a qualquer momento.
         </p>
       </section>
 
       <section className="mt-6 rounded-lg border border-border bg-card p-6">
         <h2 className="text-lg font-semibold text-foreground">Tecnologias</h2>
-        <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
-          <li>• React + TypeScript</li>
-          <li>• Tailwind CSS</li>
+        <ul className="mt-3 grid gap-1 text-sm text-muted-foreground sm:grid-cols-2">
+          <li>• React 19 + TypeScript</li>
+          <li>• TanStack Start (SSR) + Router</li>
+          <li>• TanStack Query</li>
+          <li>• Tailwind CSS + Radix UI</li>
           <li>• Lucide (ícones)</li>
-          <li>• API de tradução DeepL</li>
+          <li>• OpenAI (tradução por IA)</li>
+          <li>• Supabase (favoritos)</li>
         </ul>
       </section>
 
       <p className="mt-8 text-xs text-muted-foreground">
-        Traduções fornecidas por DeepL. DeepL é uma marca registrada da DeepL SE.
+        Traduções geradas por modelos de inteligência artificial da OpenAI. OpenAI é uma marca de
+        sua respectiva detentora.
       </p>
     </div>
   );

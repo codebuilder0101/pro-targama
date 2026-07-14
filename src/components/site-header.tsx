@@ -22,7 +22,7 @@ export function SiteHeader() {
           </span>
           <span className="leading-tight">
             <span className="block text-lg font-bold text-white">Targama</span>
-            <span className="block text-xs text-slate-300">Tradutor com base em DeepL</span>
+            <span className="block text-xs text-slate-300">Tradutor com tecnologia OpenAI</span>
           </span>
         </Link>
 

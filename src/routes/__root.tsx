@@ -82,19 +82,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
-      { title: "Targama — Tradutor minimalista com DeepL" },
+      { title: "Targama — Tradutor minimalista com IA" },
       {
         name: "description",
         content:
-          "Targama é um tradutor web minimalista com detecção automática de idioma, favoritos salvos localmente e suporte a dezenas de idiomas via DeepL.",
+          "Targama é um tradutor web minimalista com detecção automática de idioma, favoritos sincronizados e suporte a dezenas de idiomas, com tradução por IA da OpenAI.",
       },
       { name: "author", content: "Targama" },
       { name: "theme-color", content: "#1e293b" },
-      { property: "og:title", content: "Targama — Tradutor minimalista com DeepL" },
+      { property: "og:title", content: "Targama — Tradutor minimalista com IA" },
       {
         property: "og:description",
         content:
-          "Tradutor web minimalista com detecção automática de idioma e favoritos salvos no seu navegador.",
+          "Tradutor web minimalista com detecção automática de idioma e tradução por IA da OpenAI.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -144,12 +144,7 @@ function RootComponent() {
           <Outlet />
         </main>
       </div>
-      <Toaster
-        position="top-right"
-        richColors
-        closeButton
-        toastOptions={{ duration: 3000 }}
-      />
+      <Toaster position="top-right" richColors closeButton toastOptions={{ duration: 3000 }} />
     </QueryClientProvider>
   );
 }

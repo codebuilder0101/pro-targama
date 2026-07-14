@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BookOpen, Trash2 } from "lucide-react";
+import { BookOpen, Loader2, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { useFavorites } from "@/lib/favorites";
@@ -11,7 +12,7 @@ export const Route = createFileRoute("/favoritos")({
       { title: "Favoritos — Targama" },
       {
         name: "description",
-        content: "Suas traduções favoritas, salvas apenas no seu navegador.",
+        content: "Suas traduções favoritas, sincronizadas por dispositivo.",
       },
     ],
   }),
@@ -19,14 +20,18 @@ export const Route = createFileRoute("/favoritos")({
 });
 
 function FavoritesPage() {
-  const { favorites, removeFavorite } = useFavorites();
+  const { favorites, isLoading, removeFavorite } = useFavorites();
+  const [removingId, setRemovingId] = useState<string | null>(null);
 
-  const handleRemove = (id: string) => {
+  const handleRemove = async (id: string) => {
+    setRemovingId(id);
     try {
-      removeFavorite(id);
+      await removeFavorite(id);
       toast.success("Removido dos favoritos!");
     } catch {
       toast.error("Erro ao remover");
+    } finally {
+      setRemovingId(null);
     }
   };
 
@@ -34,14 +39,16 @@ function FavoritesPage() {
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
       <h1 className="text-3xl font-extrabold text-foreground sm:text-4xl">Favoritos</h1>
 
-      {favorites.length === 0 ? (
+      {isLoading ? (
+        <div className="mt-10 flex items-center justify-center py-16">
+          <Loader2 className="h-6 w-6 animate-spin text-accent" />
+        </div>
+      ) : favorites.length === 0 ? (
         <div className="mt-10 flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/50 px-6 py-16 text-center">
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-secondary">
             <BookOpen className="h-6 w-6 text-muted-foreground" />
           </span>
-          <p className="mt-4 text-lg font-medium text-foreground">
-            Nenhum favorito ainda
-          </p>
+          <p className="mt-4 text-lg font-medium text-foreground">Nenhum favorito ainda</p>
           <p className="mt-1 max-w-sm text-sm text-muted-foreground">
             Traduza um texto na página inicial e toque na estrela para salvá-lo aqui.
           </p>
@@ -62,9 +69,14 @@ function FavoritesPage() {
                 <button
                   type="button"
                   onClick={() => handleRemove(fav.id)}
-                  className="inline-flex items-center gap-2 rounded-md bg-destructive px-3 py-2 text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  disabled={removingId === fav.id}
+                  className="inline-flex items-center gap-2 rounded-md bg-destructive px-3 py-2 text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  {removingId === fav.id ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="h-4 w-4" />
+                  )}
                   Remover
                 </button>
               </div>

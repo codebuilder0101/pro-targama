@@ -21,7 +21,7 @@ function TranslatorPage() {
   const [targetLang, setTargetLang] = useState("CS");
   const [detected, setDetected] = useState<string | null>(null);
 
-  const { addFavorite } = useFavorites();
+  const { addFavorite, isSaving } = useFavorites();
   const translateFn = useServerFn(translateText);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -74,30 +74,38 @@ function TranslatorPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sourceText, targetLang]);
 
+  // Swap: use the current translation as the new input and translate it back
+  // to the previously detected source language. The debounced effect below
+  // picks up the state change and re-translates automatically.
   const handleSwap = () => {
-    const newTargetFromDetected = toTargetCode(detected);
-    if (!translatedText.trim() || !newTargetFromDetected) {
+    const newSource = translatedText.trim();
+    const newTarget = toTargetCode(detected);
+    if (!newSource || !newTarget) {
       toast.error("Traduza um texto antes de inverter.");
       return;
     }
-    setSourceText(translatedText);
-    setTargetLang(newTargetFromDetected);
+    setSourceText(newSource);
+    setTargetLang(newTarget);
     setTranslatedText("");
     setDetected(null);
   };
 
-  const handleFavorite = () => {
+  const handleFavorite = async () => {
     if (!sourceText.trim() || !translatedText.trim()) {
       toast.error("Nada para favoritar. Traduza um texto primeiro.");
       return;
     }
-    addFavorite({
-      sourceText: sourceText.trim(),
-      translatedText: translatedText.trim(),
-      sourceLang: detected ?? "auto",
-      targetLang,
-    });
-    toast.success("Adicionado aos favoritos com sucesso!");
+    try {
+      await addFavorite({
+        sourceText: sourceText.trim(),
+        translatedText: translatedText.trim(),
+        sourceLang: detected ?? "auto",
+        targetLang,
+      });
+      toast.success("Adicionado aos favoritos com sucesso!");
+    } catch {
+      toast.error("Erro ao salvar o favorito.");
+    }
   };
 
   const isLoading = mutation.isPending;
@@ -167,10 +175,18 @@ function TranslatorPage() {
               <Languages className="h-5 w-5" />
             )}
           </ActionButton>
-          <ActionButton label="Favoritar" onClick={handleFavorite}>
-            <Star className="h-5 w-5" />
+          <ActionButton
+            label="Favoritar"
+            onClick={handleFavorite}
+            disabled={isSaving || !translatedText.trim()}
+          >
+            {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Star className="h-5 w-5" />}
           </ActionButton>
-          <ActionButton label="Inverter idiomas" onClick={handleSwap}>
+          <ActionButton
+            label="Inverter idiomas"
+            onClick={handleSwap}
+            disabled={!translatedText.trim()}
+          >
             <ArrowLeftRight className="h-5 w-5" />
           </ActionButton>
         </div>
