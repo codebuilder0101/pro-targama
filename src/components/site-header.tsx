@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Home, BookOpen, Info, Languages, Menu, X } from "lucide-react";
+import { Home, BookOpen, Info, Languages, LogIn, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -39,6 +39,13 @@ export function SiteHeader() {
               {label}
             </Link>
           ))}
+          <Link
+            to="/entrar"
+            className="ml-1 flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-accent"
+          >
+            <LogIn className="h-4 w-4" />
+            Entrar
+          </Link>
         </nav>
 
         {/* Mobile toggle */}
@@ -66,6 +73,14 @@ export function SiteHeader() {
             {label}
           </Link>
         ))}
+        <Link
+          to="/entrar"
+          onClick={() => setOpen(false)}
+          className="mt-1 flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-accent"
+        >
+          <LogIn className="h-4 w-4" />
+          Entrar
+        </Link>
       </nav>
     </header>
   );

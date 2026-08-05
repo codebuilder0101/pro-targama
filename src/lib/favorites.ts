@@ -46,6 +46,9 @@ export function useFavorites() {
     queryKey: ["favorites", clientId],
     queryFn: () => listFn({ data: { clientId: clientId as string } }),
     enabled: !!clientId,
+    // Fail fast on a hard error (e.g. backend misconfig) instead of spinning
+    // through retries; the page then shows the empty state.
+    retry: false,
   });
 
   const addMutation = useMutation({

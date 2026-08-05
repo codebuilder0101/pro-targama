@@ -118,6 +118,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+function SiteFooter() {
+  return (
+    <footer className="border-t border-white/5 bg-card/40">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:px-6">
+        <span>© {2025} Targama</span>
+        <nav className="flex items-center gap-4">
+          <Link to="/sobre" className="transition-colors hover:text-foreground">
+            Sobre
+          </Link>
+          <Link to="/privacidade" className="transition-colors hover:text-foreground">
+            Privacidade
+          </Link>
+          <Link to="/termos" className="transition-colors hover:text-foreground">
+            Termos
+          </Link>
+        </nav>
+      </div>
+    </footer>
+  );
+}
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
@@ -143,6 +164,7 @@ function RootComponent() {
         <main className="flex-1">
           <Outlet />
         </main>
+        <SiteFooter />
       </div>
       <Toaster position="top-right" richColors closeButton toastOptions={{ duration: 3000 }} />
     </QueryClientProvider>

@@ -1,11 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeftRight, Check, Languages, Loader2, Star } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { LanguageSelect } from "@/components/language-select";
+import { useDailyLimit } from "@/lib/daily-limit";
 import { useFavorites } from "@/lib/favorites";
 import { sourceLanguageName, toTargetCode } from "@/lib/languages";
 import { translateText } from "@/lib/translate.functions";
@@ -22,6 +23,7 @@ function TranslatorPage() {
   const [detected, setDetected] = useState<string | null>(null);
 
   const { addFavorite, isSaving } = useFavorites();
+  const { remaining, reachedLimit, increment, isBlocked, limit } = useDailyLimit();
   const translateFn = useServerFn(translateText);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -30,6 +32,8 @@ function TranslatorPage() {
     onSuccess: (res) => {
       setTranslatedText(res.translatedText);
       setDetected(res.detectedSourceLanguage);
+      // Count one free translation against the visitor's daily quota.
+      increment();
     },
     onError: (err: Error) => {
       setTranslatedText("");
@@ -54,9 +58,14 @@ function TranslatorPage() {
         setDetected(null);
         return;
       }
+      // Visitors get a limited number of free translations per day.
+      if (isBlocked()) {
+        setTranslatedText("");
+        return;
+      }
       mutation.mutate({ text: trimmed, targetLang: lang });
     },
-    [mutation],
+    [mutation, isBlocked],
   );
 
   // Debounced auto-translate while typing / changing target language.
@@ -162,12 +171,31 @@ function TranslatorPage() {
           </div>
         </div>
 
+        {/* Daily free quota for visitors */}
+        {reachedLimit ? (
+          <div className="mt-6 rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-center text-sm">
+            <p className="text-foreground">
+              Você atingiu o limite de {limit} traduções gratuitas hoje.
+            </p>
+            <Link
+              to="/cadastro"
+              className="mt-1 inline-block font-medium text-accent underline underline-offset-2"
+            >
+              Crie uma conta para traduzir sem limite
+            </Link>
+          </div>
+        ) : (
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Faltam {remaining} de {limit} traduções gratuitas hoje.
+          </p>
+        )}
+
         {/* Actions */}
-        <div className="mt-8 flex items-center justify-center gap-4">
+        <div className="mt-6 flex items-center justify-center gap-4">
           <ActionButton
             label="Traduzir"
             onClick={() => runTranslate(sourceText, targetLang)}
-            disabled={isLoading || !sourceText.trim()}
+            disabled={isLoading || !sourceText.trim() || reachedLimit}
           >
             {isLoading ? (
               <Loader2 className="h-5 w-5 animate-spin" />
